@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Complete Profile - Select Role</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f5f7fa;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label, select, button {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      font-size: 16px;
+    }
+    select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <h2>Complete Your Profile</h2>
+  <p>Please select your role to continue:</p>
+
+  <label for="role-select">I am a:</label>
+  <select id="role-select" required>
+    <option value="">Select a role</option>
+    <option value="client">Client</option>
+    <option value="freelancer">Freelancer</option>
+  </select>
+
+  <button id="save-role-btn">Save and Continue</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_4ImmkQfHuhpQuFtAjtb0485ZhVxV3p4",
+      authDomain: "freelancehub-a1f32.firebaseapp.com",
+      projectId: "freelancehub-a1f32",
+      storageBucket: "freelancehub-a1f32.appspot.com", 
+      messagingSenderId: "443483995651",
+      appId: "1:443483995651:web:7d49449f605aeb183b5836",
+      measurementId: "G-PMN8VY94Y3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase(app);
+
+    const roleSelect = document.getElementById('role-select');
+    const saveBtn = document.getElementById('save-role-btn');
+
+    let currentUser = null;
+
+    // Check if user is signed in
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // Not signed in — redirect to sign-in page
+        alert('You must be signed in to complete your profile.');
+        window.location.href = 'auth.html';
+        return;
+      }
+      currentUser = user;
+
+      // Optional: check if role already set, redirect if yes
+      const userRef = ref(database, 'users/' + user.uid);
+      const snapshot = await get(userRef);
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        if (data.role && data.role !== 'unassigned') {
+          // Role already set, redirect to home
+          window.location.href = 'index.html';
+        }
+      }
+    });
+
+    saveBtn.addEventListener('click', async () => {
+      const selectedRole = roleSelect.value;
+      if (!selectedRole) {
+        alert('Please select a role.');
+        return;
+      }
+      if (!currentUser) {
+        alert('User not authenticated.');
+        return;
+      }
+
+      const userRef = ref(database, 'users/' + currentUser.uid);
+
+      try {
+        // Update role in the database
+        await set(userRef, {
+          uid: currentUser.uid,
+          name: currentUser.displayName || 'Unnamed User',
+          email: currentUser.email,
+          role: selectedRole,
+          registrationDate: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
+        });
+        alert('Role saved successfully! Redirecting...');
+        window.location.href = 'index.html';
+      } catch (error) {
+        alert('Failed to save role: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

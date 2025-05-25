@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Post a Project</title>
+</head>
+<body>
+  <h2>Post a New Project</h2>
+  <form id="project-form">
+    <label>Title:</label>
+    <input type="text" id="project-title" required />
+    <label>Description:</label>
+    <textarea id="project-description" required></textarea>
+    <button type="submit">Post Project</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getDatabase, ref, push, set, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = { /* your config here */ };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userSnapshot = await get(ref(database, 'users/' + user.uid));
+        const userData = userSnapshot.val();
+        if (userData.role !== 'client') {
+          alert("Only clients can post projects.");
+          window.location.href = "index.html";
+        }
+
+        document.getElementById("project-form").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const title = document.getElementById("project-title").value;
+          const description = document.getElementById("project-description").value;
+          const projectRef = push(ref(database, 'projects'));
+          await set(projectRef, {
+            title,
+            description,
+            postedBy: user.uid,
+            timestamp: new Date().toISOString()
+          });
+          alert("Project posted!");
+        });
+
+      } else {
+        window.location.href = "auth.html";
+      }
+    });
+  </script>
+</body>
+</html>

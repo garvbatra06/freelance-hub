@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreelanceHub - Connect with Top Freelancers</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header>
+    <div class="container navbar">
+      <div class="logo">Freelance<span>Hub</span></div>
+      <nav>
+        <ul>
+          <li><a href="#" class="nav-home active">Home</a></li>
+          <li><a href="#" class="nav-freelancers">Freelancers</a></li>
+          <li><a href="#" class="nav-jobs">Jobs</a></li>
+          <li><a href="#" class="nav-about">About</a></li>
+        </ul>
+      </nav>
+      <div class="auth-buttons" id="auth-buttons-container">
+        <button id="login-button">Login</button>
+        <button id="signup-button">Sign Up</button>
+      </div>
+      <div class="user-profile-display" id="user-profile-display" style="display: none; position: relative;">
+        <img src="assets/default-profile.png" alt="Profile" class="profile-pic" id="profile-pic" style="cursor: pointer;" />
+        <span class="user-name" id="user-name"></span>
+        <div class="profile-dropdown" id="profile-dropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ccc; border-radius: 8px; width: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 999;">
+          <ul style="list-style: none; margin: 0; padding: 0;">
+            <li style="padding: 10px; cursor: pointer;" id="manage-profile">Manage Your Profile</li>
+            <li style="padding: 10px; cursor: pointer;" id="signout-button">Sign Out</li>
+          </ul>
+        </div>
+      </div>      
+      <button class="post-job-button" id="post-job-button" style="display: none;">Post a Job</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Find the perfect match for your project</h1>
+      <p>Connect with top freelancers or find your next gig. FreelanceHub makes it easy to collaborate on projects of any size.</p>
+      <div class="cta-buttons" id="hero-cta-buttons">
+        <button class="cta-button primary-button" id="freelancer-signup">Register as Freelancer</button>
+        <button class="cta-button secondary-button" id="client-signup">Register as Client</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="container" id="status-container" style="display: none;">
+    <div class="status-message" id="status-message"></div>
+  </div>
+
+  <section class="registration-container" id="freelancer-form">
+    <div class="container">
+      <h2>Register as a Freelancer</h2>
+      <form id="freelancer-registration">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" required disabled/> 
+        </div>
+        <div class="form-group">
+          <label for="title">Professional Title</label>
+          <input type="text" id="title" required />
+        </div>
+        <div class="form-group">
+          <label for="skills">Skills (comma separated)</label>
+          <input type="text" id="skills" required />
+        </div>
+        <div class="form-group">
+          <label for="experience">Years of Experience</label>
+          <select id="experience" required>
+            <option value="">Select experience</option>
+            <option value="0-1">Less than 1 year</option>
+            <option value="1-3">1-3 years</option>
+            <option value="3-5">3-5 years</option>
+            <option value="5-10">5-10 years</option>
+            <option value="10+">10+ years</option>
+          </select>
+        </div>
+        <div class="form-group">
+            <label for="location">Location (City, Country)</label>
+            <input type="text" id="location" placeholder="e.g., London, UK" required>
+        </div>
+        <div class="form-group">
+            <label for="timezone">Time Zone</label>
+            <select id="timezone" required>
+                <option value="">Select your time zone</option>
+                <option value="UTC-12">UTC-12:00 (Baker Island)</option>
+                <option value="UTC-11">UTC-11:00 (Niue, Samoa)</option>
+                <option value="UTC-10">UTC-10:00 (Hawaii)</option>
+                <option value="UTC-9">UTC-09:00 (Alaska)</option>
+                <option value="UTC-8">UTC-08:00 (Pacific Time - US & Canada)</option>
+                <option value="UTC-7">UTC-07:00 (Mountain Time - US & Canada)</option>
+                <option value="UTC-6">UTC-06:00 (Central Time - US & Canada)</option>
+                <option value="UTC-5">UTC-05:00 (Eastern Time - US & Canada)</option>
+                <option value="UTC-4">UTC-04:00 (Atlantic Time - Canada)</option>
+                <option value="UTC-3:30">UTC-03:30 (Newfoundland)</option>
+                <option value="UTC-3">UTC-03:00 (Buenos Aires, Greenland)</option>
+                <option value="UTC-2">UTC-02:00 (Mid-Atlantic)</option>
+                <option value="UTC-1">UTC-01:00 (Azores)</option>
+                <option value="UTC+0">UTC+00:00 (GMT, London, Dublin)</option>
+                <option value="UTC+1">UTC+01:00 (CET, Paris, Berlin)</option>
+                <option value="UTC+2">UTC+02:00 (EET, Cairo, Athens)</option>
+                <option value="UTC+3">UTC+03:00 (Moscow, Istanbul)</option>
+                <option value="UTC+3:30">UTC+03:30 (Tehran)</option>
+                <option value="UTC+4">UTC+04:00 (Dubai, Baku)</option>
+                <option value="UTC+4:30">UTC+04:30 (Kabul)</option>
+                <option value="UTC+5">UTC+05:00 (Karachi, Tashkent)</option>
+                <option value="UTC+5:30">UTC+05:30 (Chennai, Kolkata, Mumbai, New Delhi)</option>
+                <option value="UTC+5:45">UTC+05:45 (Kathmandu)</option>
+                <option value="UTC+6">UTC+06:00 (Dhaka, Almaty)</option>
+                <option value="UTC+6:30">UTC+06:30 (Yangon)</option>
+                <option value="UTC+7">UTC+07:00 (Bangkok, Hanoi, Jakarta)</option>
+                <option value="UTC+8">UTC+08:00 (Beijing, Perth, Singapore)</option>
+                <option value="UTC+8:45">UTC+08:45 (Eucla)</option>
+                <option value="UTC+9">UTC+09:00 (Tokyo, Seoul)</option>
+                <option value="UTC+9:30">UTC+09:30 (Adelaide, Darwin)</option>
+                <option value="UTC+10">UTC+10:00 (Brisbane, Sydney, Vladivostok)</option>
+                <option value="UTC+10:30">UTC+10:30 (Lord Howe Island)</option>
+                <option value="UTC+11">UTC+11:00 (Solomon Is., New Caledonia)</option>
+                <option value="UTC+11:30">UTC+11:30 (Norfolk Island)</option>
+                <option value="UTC+12">UTC+12:00 (Auckland, Fiji)</option>
+                <option value="UTC+12:45">UTC+12:45 (Chatham Is.)</option>
+                <option value="UTC+13">UTC+13:00 (Nuku'alofa)</option>
+                <option value="UTC+14">UTC+14:00 (Kiritimati)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="availability">Availability</label>
+            <select id="availability" required>
+                <option value="">Select availability</option>
+                <option value="full-time">Full-time (40+ hrs/week)</option>
+                <option value="part-time">Part-time (10-30 hrs/week)</option>
+                <option value="as-needed">As needed (less than 10 hrs/week)</option>
+                <option value="unavailable">Currently Unavailable</option>
+            </select>
+        </div>
+        <div class="form-group">
+          <label for="hourly-rate">Hourly Rate ($)</label>
+          <input type="number" id="hourly-rate" min="5" required />
+        </div>
+        <div class="form-group">
+          <label for="bio">About Yourself</label>
+          <textarea id="bio" required></textarea>
+        </div>
+        <button type="submit" class="submit-button">Register as Freelancer</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="registration-container" id="client-form">
+    <div class="container">
+      <h2>Register as a Client</h2>
+      <form id="client-registration">
+        <div class="form-group">
+          <label for="client-name">Full Name</label>
+          <input type="text" id="client-name" required />
+        </div>
+        <div class="form-group">
+          <label for="client-email">Email Address</label>
+          <input type="email" id="client-email" required disabled/>
+        </div>
+        <div class="form-group">
+          <label for="company">Company Name (Optional)</label>
+          <input type="text" id="company" />
+        </div>
+        <div class="form-group">
+          <label for="industry">Industry</label>
+          <select id="industry" required>
+            <option value="">Select industry</option>
+            <option value="tech">Technology</option>
+            <option value="marketing">Marketing</option>
+            <option value="education">Education</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="finance">Finance</option>
+            <option value="retail">Retail</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button type="submit" class="submit-button">Register as Client</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="registration-container" id="job-posting-form" style="display: none;">
+    <div class="container">
+      <h2>Post a New Job</h2>
+      <form id="new-job-form">
+        <div class="form-group">
+          <label for="job-title">Job Title</label>
+          <input type="text" id="job-title" required />
+        </div>
+        <div class="form-group">
+          <label for="job-description">Job Description</label>
+          <textarea id="job-description" rows="8" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="job-budget">Budget (Fixed Price, USD)</label>
+          <input type="number" id="job-budget" min="10" required />
+        </div>
+        <div class="form-group">
+          <label for="job-duration">Estimated Duration</label>
+          <select id="job-duration" required>
+              <option value="">Select duration</option>
+              <option value="less-than-1-week">Less than 1 week</option>
+              <option value="1-2-weeks">1-2 weeks</option>
+              <option value="2-4-weeks">2-4 weeks</option>
+              <option value="1-3-months">1-3 months</option>
+              <option value="3-6-months">3-6 months</option>
+              <option value="6-months-plus">More than 6 months</option>
+          </select>
+        </div>
+        <button type="submit" class="submit-button">Submit Job Posting</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="client-dashboard" id="client-dashboard">
+    <div class="container">
+      <h2>Available Freelancers</h2>
+      <div class="freelancers-grid" id="freelancers-grid">
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Available Projects</title>
+</head>
+<body>
+  <h2>Available Projects</h2>
+  <ul id="project-list"></ul>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = { /* your config here */ };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userSnapshot = await get(ref(database, 'users/' + user.uid));
+        const userData = userSnapshot.val();
+        if (userData.role !== 'freelancer') {
+          alert("Only freelancers can view projects.");
+          window.location.href = "index.html";
+        }
+
+        const projectSnapshot = await get(ref(database, 'projects'));
+        const projectList = document.getElementById('project-list');
+        if (projectSnapshot.exists()) {
+          const projects = projectSnapshot.val();
+          for (let id in projects) {
+            const p = projects[id];
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${p.title}</strong><br>${p.description}`;
+            projectList.appendChild(li);
+          }
+        } else {
+          projectList.innerHTML = "No projects found.";
+        }
+      } else {
+        window.location.href = "auth.html";
+      }
+    });
+  </script>
+</body>
+</html>
