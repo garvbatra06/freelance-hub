@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create Account</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 20px;
+      background-color: #f0f2f5;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #219150;
+    }
+    .link {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .link a {
+      color: #3498db;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>Create Account</h2>
+  <input type="text" id="name" placeholder="Full Name" required />
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <select id="role" required>
+    <option value="">Select Role</option>
+    <option value="client">Client</option>
+    <option value="freelancer">Freelancer</option>
+  </select>
+  <button id="register-btn">Register</button>
+
+  <div class="link">
+    Already have an account? <a href="auth.html">Login</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_4ImmkQfHuhpQuFtAjtb0485ZhVxV3p4",
+      authDomain: "freelancehub-a1f32.firebaseapp.com",
+      projectId: "freelancehub-a1f32",
+      storageBucket: "freelancehub-a1f32.appspot.com",
+      messagingSenderId: "443483995651",
+      appId: "1:443483995651:web:7d49449f605aeb183b5836",
+      measurementId: "G-PMN8VY94Y3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase(app);
+
+    const registerBtn = document.getElementById("register-btn");
+
+    registerBtn.addEventListener("click", async () => {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const role = document.getElementById("role").value;
+
+      if (!name || !email || !password || !role) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        const userRef = ref(database, "users/" + user.uid);
+        await set(userRef, {
+          uid: user.uid,
+          name: name,
+          email: email,
+          role: role,
+          registrationDate: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
+        });
+
+        alert("Registration successful!");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Registration failed: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
