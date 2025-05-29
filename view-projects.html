@@ -1,46 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Available Projects</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f7f9fc;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background-color: #fff;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    li strong {
+      font-size: 18px;
+      color: #34495e;
+    }
+  </style>
 </head>
 <body>
   <h2>Available Projects</h2>
-  <ul id="project-list"></ul>
+  <ul id="project-list">
+    <li>Loading projects...</li>
+  </ul>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
     import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-    const firebaseConfig = { /* your config here */ };
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_4ImmkQfHuhpQuFtAjtb0485ZhVxV3p4",
+      authDomain: "freelancehub-a1f32.firebaseapp.com",
+      projectId: "freelancehub-a1f32",
+      storageBucket: "freelancehub-a1f32.appspot.com",
+      messagingSenderId: "443483995651",
+      appId: "1:443483995651:web:7d49449f605aeb183b5836",
+      measurementId: "G-PMN8VY94Y3"
+    };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     const database = getDatabase(app);
 
+    const projectList = document.getElementById('project-list');
+
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
+      if (!user) {
+        window.location.href = "auth.html";
+        return;
+      }
+
+      try {
         const userSnapshot = await get(ref(database, 'users/' + user.uid));
         const userData = userSnapshot.val();
+
         if (userData.role !== 'freelancer') {
           alert("Only freelancers can view projects.");
           window.location.href = "index.html";
+          return;
         }
 
         const projectSnapshot = await get(ref(database, 'projects'));
-        const projectList = document.getElementById('project-list');
+
+        projectList.innerHTML = ''; // Clear default message
+
         if (projectSnapshot.exists()) {
           const projects = projectSnapshot.val();
-          for (let id in projects) {
-            const p = projects[id];
+          Object.entries(projects).forEach(([id, project]) => {
             const li = document.createElement('li');
-            li.innerHTML = `<strong>${p.title}</strong><br>${p.description}`;
+            li.innerHTML = `
+              <strong>${project.title}</strong><br>
+              <p>${project.description}</p>
+            `;
             projectList.appendChild(li);
-          }
+          });
         } else {
-          projectList.innerHTML = "No projects found.";
+          projectList.innerHTML = "<li>No projects found.</li>";
         }
-      } else {
-        window.location.href = "auth.html";
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        projectList.innerHTML = "<li>Failed to load projects. Try again later.</li>";
       }
     });
   </script>
